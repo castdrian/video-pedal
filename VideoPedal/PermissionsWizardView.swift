@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A two-step wizard: Camera access, then installing the camera system extension.
+/// A two-step wizard: Camera access, then connecting to OBS Virtual Camera.
 struct PermissionsWizardView: View {
     @EnvironmentObject private var appState: AppState
 
@@ -8,7 +8,7 @@ struct PermissionsWizardView: View {
         VStack(spacing: 24) {
             Text("Set up videopedal")
                 .font(.title.bold())
-            Text("Three one-time steps, then you're ready to go.")
+            Text("Two one-time steps, then you're ready to go.")
                 .foregroundStyle(.secondary)
 
             VStack(spacing: 16) {
@@ -19,10 +19,10 @@ struct PermissionsWizardView: View {
                     action: "Grant access", action_: appState.requestCameraAccess)
 
                 WizardStep(
-                    number: 2, title: "Install the virtual camera",
+                    number: 2, title: "Connect OBS Virtual Camera",
                     detail: extensionDetail,
                     done: appState.obsAvailable,
-                    action: "Install", action_: appState.installExtension,
+                    action: "Connect", action_: appState.connectOBS,
                     disabled: !appState.cameraAuthorized)
             }
             .padding(24)

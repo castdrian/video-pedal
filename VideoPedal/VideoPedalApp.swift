@@ -8,29 +8,24 @@ struct VideoPedalApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(appState)
-                .frame(minWidth: 720, minHeight: 560)
+                .frame(minWidth: 700, minHeight: 438)
         }
-        .windowResizability(.contentSize)
+        .defaultSize(width: 800, height: 500)
+
+        Settings {
+            SettingsView()
+                .environmentObject(appState)
+                .frame(width: 420, height: 420)
+        }
     }
 }
 
-/// Shows the permission wizard until everything required is granted, then the main window.
 struct RootView: View {
     @EnvironmentObject private var appState: AppState
 
-    private var allSet: Bool {
-        appState.cameraAuthorized && appState.obsAvailable
-    }
-
     var body: some View {
-        Group {
-            if allSet {
-                ContentView()
-                    .onAppear { appState.start() }
-                    .onDisappear { appState.stop() }
-            } else {
-                PermissionsWizardView()
-            }
-        }
+        ContentView()
+            .onAppear { appState.start() }
+            .onDisappear { appState.stop() }
     }
 }

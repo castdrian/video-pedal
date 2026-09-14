@@ -1,7 +1,6 @@
 import Foundation
 import AVFoundation
 import CoreImage
-import Combine
 import SwiftUI
 
 /// Ties together capture, the pedal state machine, the hotkey monitor and the extension
@@ -24,13 +23,13 @@ final class AppState: ObservableObject {
     @Published private(set) var hud = PedalHUDInfo(state: .live, elapsed: nil, total: nil, progress: nil)
     @Published private(set) var pedalEnabled = false
     @Published private(set) var logLines: [String] = []
+    @Published private(set) var statusMessage = "Starting..."
 
     private let obsOutput = OBSOutputClient()
     private let capture = CameraCaptureManager()
-    private let extensionClient = ExtensionClient()
     private var hotkey: HotkeyMonitor?
     private var engine: PedalEngine?
-    private var cancellables: Set<AnyCancellable> = []
+    private var isRunning = false
 
     private let ciContext = CIContext()
     private lazy var codec = JPEGFrameCodec(context: ciContext)
@@ -55,8 +54,10 @@ final class AppState: ObservableObject {
             self.cameraAuthorized = granted
             if granted {
                 Task { @MainActor in
-                    self.connectOBS()
+                    self.start()
                 }
+            } else {
+                self.statusMessage = "Camera access is required for capture."
             }
         }
     }
@@ -68,25 +69,30 @@ final class AppState: ObservableObject {
         inputMonitoringAuthorized = true
     }
 
-    func installExtension() {
-        connectOBS()
-    }
-
     func connectOBS() {
         obsOutput.connect(width: SharedConstants.outputWidth, height: SharedConstants.outputHeight)
         obsAvailable = obsOutput.isAvailable
+        statusMessage = obsAvailable ? "OBS Virtual Camera connected" : "OBS Virtual Camera unavailable"
         log(obsAvailable ? "OBS Virtual Camera connected." : "OBS Virtual Camera is unavailable. Start it once in OBS.")
     }
 
     // MARK: - Runtime
 
     func start() {
+        guard !isRunning else { return }
+        guard cameraAuthorized else {
+            statusMessage = "Requesting camera access..."
+            requestCameraAccess()
+            return
+        }
+        isRunning = true
         engine = PedalEngine(fps: Double(SharedConstants.outputFPS), maxSeconds: maxSeconds, minSeconds: minSeconds,
                              crossfadeSeconds: crossfadeSeconds, codec: codec, blender: blender,
                              log: { [weak self] in self?.log($0) })
 
         obsOutput.connect(width: SharedConstants.outputWidth, height: SharedConstants.outputHeight)
         obsAvailable = obsOutput.isAvailable
+        statusMessage = obsAvailable ? "Ready" : "Preview only"
 
         capture.onFrame = { [weak self] pixelBuffer in
             guard let self else { return }
@@ -98,6 +104,7 @@ final class AppState: ObservableObject {
             log("Camera started: \(selectedCamera?.localizedName ?? "default")")
         } catch {
             log("Camera error: \(error.localizedDescription)")
+            statusMessage = "Camera unavailable"
         }
 
         let hotkey = HotkeyMonitor(pedalKey: pedalKey, liveKey: liveKey)
@@ -120,6 +127,8 @@ final class AppState: ObservableObject {
     }
 
     func stop() {
+        guard isRunning else { return }
+        isRunning = false
         capture.stop()
         hotkey?.stop()
         hotkey = nil

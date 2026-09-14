@@ -26,7 +26,5 @@
 	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>videopedal captures your webcam to record and loop clips that are published as a virtual camera.</string>
-	<key>NSSystemExtensionUsageDescription</key>
-	<string>videopedal installs a camera extension so video calls can select "videopedal" as a webcam.</string>
 </dict>
 </plist>

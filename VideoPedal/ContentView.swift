@@ -5,34 +5,53 @@ struct ContentView: View {
     @EnvironmentObject private var appState: AppState
 
     var body: some View {
-        HSplitView {
-            VStack(spacing: 0) {
-                previewArea
-                hudBar
+        VStack(spacing: 0) {
+            previewArea
+            hudBar
+        }
+        .background(Color.black)
+        .background(WindowAspectRatio(ratio: CGSize(width: 16, height: 10)))
+        .toolbar {
+            ToolbarItem {
+                Button {
+                    appState.connectOBS()
+                } label: {
+                    Image(systemName: "arrow.clockwise")
+                }
+                .help("Reconnect OBS Virtual Camera")
+                .disabled(appState.obsAvailable)
             }
-            .frame(minWidth: 480)
-
-            SettingsPanel()
-                .frame(minWidth: 260, maxWidth: 320)
+            ToolbarItem {
+                SettingsLink {
+                    Image(systemName: "gearshape")
+                }
+                .help("Open Settings")
+            }
         }
     }
 
     @ViewBuilder
     private var previewArea: some View {
-        GeometryReader { proxy in
-            ZStack {
-                Color.black
-                if let image = appState.previewImage {
-                    Image(decorative: image, scale: 1, orientation: .up)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .scaleEffect(x: -1, y: 1)  // mirror the self-view only
-                } else {
-                    ProgressView("Waiting for camera\u{2026}").foregroundStyle(.white)
+        ZStack {
+            Color.black
+            if let image = appState.previewImage {
+                Image(decorative: image, scale: 1, orientation: .up)
+                    .resizable()
+                    .scaledToFill()
+                    .scaleEffect(x: -1, y: 1)
+                    .clipped()
+            } else {
+                VStack(spacing: 10) {
+                    ProgressView()
+                    Text(appState.statusMessage)
+                        .font(.callout)
+                        .foregroundStyle(.white.opacity(0.8))
                 }
             }
-            .frame(width: proxy.size.width, height: proxy.size.height)
         }
+        .aspectRatio(16 / 9, contentMode: .fit)
+        .frame(maxWidth: .infinity)
+        .clipped()
     }
 
     private var hudBar: some View {
@@ -46,10 +65,22 @@ struct ContentView: View {
                 }
             }
             Spacer()
-            Button(appState.hud.state == .recording ? "Stop (R)" : "Record (R)") {
+            Text(appState.statusMessage)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+            Button {
                 appState.toggleRecordFromUI()
+            } label: {
+                Label(appState.hud.state == .recording ? "Stop" : "Record", systemImage: appState.hud.state == .recording ? "stop.fill" : "record.circle")
             }
-            Button("Go live (L)") { appState.goLiveFromUI() }
+            .keyboardShortcut("r", modifiers: [])
+            Button {
+                appState.goLiveFromUI()
+            } label: {
+                Label("Live", systemImage: "dot.radiowaves.left.and.right")
+            }
+            .keyboardShortcut("l", modifiers: [])
                 .disabled(appState.hud.state == .live)
         }
         .padding(10)
@@ -86,7 +117,7 @@ private struct StateBadge: View {
     }
 }
 
-private struct SettingsPanel: View {
+struct SettingsView: View {
     @EnvironmentObject private var appState: AppState
 
     var body: some View {
@@ -127,17 +158,21 @@ private struct SettingsPanel: View {
                 }
             }
 
-            Section("Log") {
+            DisclosureGroup("Activity") {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 2) {
-                        ForEach(Array(appState.logLines.suffix(40).enumerated()), id: \.offset) { _, line in
-                            Text(line).font(.caption.monospaced()).foregroundStyle(.secondary)
+                        ForEach(Array(appState.logLines.suffix(20).enumerated()), id: \.offset) { _, line in
+                            Text(line)
+                                .font(.caption.monospaced())
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }
-                .frame(height: 160)
+                .frame(height: 110)
             }
         }
         .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
+        .background(.regularMaterial)
     }
 }

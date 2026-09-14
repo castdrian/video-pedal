@@ -34,39 +34,46 @@ final class CameraCaptureManager: NSObject, AVCaptureVideoDataOutputSampleBuffer
 
     func start(device requested: AVCaptureDevice?, width: Int32, height: Int32, fps: Double) throws {
         session.beginConfiguration()
-        defer { session.commitConfiguration() }
+        do {
+            session.inputs.forEach { session.removeInput($0) }
+            session.outputs.forEach { session.removeOutput($0) }
 
-        session.inputs.forEach { session.removeInput($0) }
-        session.outputs.forEach { session.removeOutput($0) }
+            let camera = requested ?? AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .unspecified)
+            guard let camera else { throw CaptureError.noCamera }
+            self.device = camera
 
-        let camera = requested ?? AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .unspecified)
-        guard let camera else { throw CaptureError.noCamera }
-        self.device = camera
+            let input = try AVCaptureDeviceInput(device: camera)
+            guard session.canAddInput(input) else { throw CaptureError.cannotAddInput }
+            session.addInput(input)
 
-        let input = try AVCaptureDeviceInput(device: camera)
-        guard session.canAddInput(input) else { throw CaptureError.cannotAddInput }
-        session.addInput(input)
+            let output = AVCaptureVideoDataOutput()
+            output.videoSettings = [
+                kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
+                kCVPixelBufferIOSurfacePropertiesKey as String: [:],
+            ]
+            output.alwaysDiscardsLateVideoFrames = true
+            output.setSampleBufferDelegate(self, queue: outputQueue)
+            guard session.canAddOutput(output) else { throw CaptureError.cannotAddOutput }
+            session.addOutput(output)
 
-        let output = AVCaptureVideoDataOutput()
-        output.videoSettings = [
-            kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
-            // IOSurface-backed so frames can cross the XPC boundary to the extension without a copy.
-            kCVPixelBufferIOSurfacePropertiesKey as String: [:],
-        ]
-        output.alwaysDiscardsLateVideoFrames = true
-        output.setSampleBufferDelegate(self, queue: outputQueue)
-        guard session.canAddOutput(output) else { throw CaptureError.cannotAddOutput }
-        session.addOutput(output)
+            configureFormat(camera: camera, width: width, height: height, fps: fps)
+        } catch {
+            session.commitConfiguration()
+            throw error
+        }
+        session.commitConfiguration()
 
-        configureFormat(camera: camera, width: width, height: height, fps: fps)
-
-        if !session.isRunning {
-            session.startRunning()
+        outputQueue.sync {
+            if !session.isRunning {
+                session.startRunning()
+            }
         }
     }
 
     func stop() {
-        if session.isRunning { session.stopRunning() }
+        outputQueue.sync {
+            if session.isRunning { session.stopRunning() }
+        }
     }
 
     private func configureFormat(camera: AVCaptureDevice, width: Int32, height: Int32, fps: Double) {

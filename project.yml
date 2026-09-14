@@ -27,7 +27,6 @@ targets:
         LSMinimumSystemVersion: "14.0"
         LSUIElement: false
         NSCameraUsageDescription: videopedal captures your webcam to record and loop clips that are published as a virtual camera.
-        NSSystemExtensionUsageDescription: videopedal installs a camera extension so video calls can select "videopedal" as a webcam.
     entitlements:
       path: VideoPedal/VideoPedal.entitlements
       properties:
@@ -38,13 +37,11 @@ targets:
         com.apple.security.device.camera: true
         com.apple.security.application-groups:
           - group.dev.castdrian.videopedal
-        com.apple.developer.system-extension.install: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.castdrian.videopedal
         PRODUCT_NAME: videopedal
         EXECUTABLE_NAME: videopedal
-        SYSTEM_EXTENSIONS_FOLDER_PATH: "$(CONTENTS_FOLDER_PATH)/PlugIns"
         INFOPLIST_KEY_NSHumanReadableCopyright: ""
         GENERATE_INFOPLIST_FILE: false
         ENABLE_HARDENED_RUNTIME: true
@@ -54,37 +51,6 @@ targets:
       - sdk: CoreMediaIO.framework
       - sdk: CoreMedia.framework
       - sdk: CoreVideo.framework
-
-  VideoPedalCameraExtension:
-    type: system-extension
-    platform: macOS
-    bundleIdPrefix: dev.castdrian.videopedal
-    sources:
-      - path: VideoPedalCameraExtension
-      - path: Shared
-    info:
-      path: VideoPedalCameraExtension/Info.plist
-      properties:
-        CFBundleDisplayName: videopedalcameraextension
-        CFBundlePackageType: SYSX
-        LSMinimumSystemVersion: "14.0"
-        NSExtension:
-          NSExtensionPointIdentifier: com.apple.cmio.extension
-        CMIOExtensionMachServiceName: dev.castdrian.videopedal.cameraextension.xpc
-    entitlements:
-      path: VideoPedalCameraExtension/VideoPedalCameraExtension.entitlements
-      properties:
-        com.apple.security.app-sandbox: true
-        com.apple.security.application-groups:
-          - group.dev.castdrian.videopedal
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: dev.castdrian.videopedal.cameraextension
-        PRODUCT_NAME: dev.castdrian.videopedal.cameraextension
-        EXECUTABLE_NAME: dev.castdrian.videopedal.cameraextension
-        GENERATE_INFOPLIST_FILE: false
-        SKIP_INSTALL: true
-        ENABLE_HARDENED_RUNTIME: true
 
 schemes:
   VideoPedal:
