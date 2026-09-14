@@ -23,11 +23,11 @@ targets:
     info:
       path: VideoPedal/Info.plist
       properties:
-        CFBundleDisplayName: Video Pedal
+        CFBundleDisplayName: videopedal
         LSMinimumSystemVersion: "14.0"
         LSUIElement: false
-        NSCameraUsageDescription: Video Pedal captures your webcam to record and loop clips that are published as a virtual camera.
-        NSSystemExtensionUsageDescription: Video Pedal installs a camera extension so video calls can select "Video Pedal" as a webcam.
+        NSCameraUsageDescription: videopedal captures your webcam to record and loop clips that are published as a virtual camera.
+        NSSystemExtensionUsageDescription: videopedal installs a camera extension so video calls can select "videopedal" as a webcam.
     entitlements:
       path: VideoPedal/VideoPedal.entitlements
       properties:
@@ -42,7 +42,8 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.castdrian.videopedal
-        PRODUCT_NAME: VideoPedal
+        PRODUCT_NAME: videopedal
+        EXECUTABLE_NAME: videopedal
         INFOPLIST_KEY_NSHumanReadableCopyright: ""
         GENERATE_INFOPLIST_FILE: false
         ENABLE_HARDENED_RUNTIME: true
@@ -62,7 +63,7 @@ targets:
     info:
       path: VideoPedalCameraExtension/Info.plist
       properties:
-        CFBundleDisplayName: Video Pedal Camera Extension
+        CFBundleDisplayName: videopedalcameraextension
         CFBundlePackageType: SYSX
         LSMinimumSystemVersion: "14.0"
         NSExtension:
@@ -77,7 +78,8 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.castdrian.videopedal.cameraextension
-        PRODUCT_NAME: VideoPedalCameraExtension
+        PRODUCT_NAME: videopedalcameraextension
+        EXECUTABLE_NAME: videopedalcameraextension
         GENERATE_INFOPLIST_FILE: false
         SKIP_INSTALL: true
         ENABLE_HARDENED_RUNTIME: true

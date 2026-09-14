@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Video Pedal</string>
+	<string>videopedal</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>videopedal</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -25,8 +25,8 @@
 	<key>LSUIElement</key>
 	<false/>
 	<key>NSCameraUsageDescription</key>
-	<string>Video Pedal captures your webcam to record and loop clips that are published as a virtual camera.</string>
+	<string>videopedal captures your webcam to record and loop clips that are published as a virtual camera.</string>
 	<key>NSSystemExtensionUsageDescription</key>
-	<string>Video Pedal installs a camera extension so video calls can select "Video Pedal" as a webcam.</string>
+	<string>videopedal installs a camera extension so video calls can select "videopedal" as a webcam.</string>
 </dict>
 </plist>
