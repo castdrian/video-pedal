@@ -1,0 +1,92 @@
+name: VideoPedal
+options:
+  bundleIdPrefix: dev.castdrian.videopedal
+  createIntermediateGroups: true
+  deploymentTarget:
+    macOS: "14.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+
+targets:
+  VideoPedal:
+    type: application
+    platform: macOS
+    bundleIdPrefix: dev.castdrian.videopedal
+    sources:
+      - path: VideoPedal
+      - path: Shared
+    info:
+      path: VideoPedal/Info.plist
+      properties:
+        CFBundleDisplayName: Video Pedal
+        LSMinimumSystemVersion: "14.0"
+        LSUIElement: false
+        NSCameraUsageDescription: Video Pedal captures your webcam to record and loop clips that are published as a virtual camera.
+        NSSystemExtensionUsageDescription: Video Pedal installs a camera extension so video calls can select "Video Pedal" as a webcam.
+    entitlements:
+      path: VideoPedal/VideoPedal.entitlements
+      properties:
+        # Not sandboxed: a session-wide CGEventTap for the global pedal/live hotkeys is
+        # rejected by the sandbox regardless of Input Monitoring TCC approval. Fine for a
+        # GitHub-distributed app (sandbox is only mandatory for Mac App Store distribution).
+        com.apple.security.app-sandbox: false
+        com.apple.security.device.camera: true
+        com.apple.security.application-groups:
+          - group.dev.castdrian.videopedal
+        com.apple.developer.system-extension.install: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.castdrian.videopedal
+        PRODUCT_NAME: VideoPedal
+        INFOPLIST_KEY_NSHumanReadableCopyright: ""
+        GENERATE_INFOPLIST_FILE: false
+        ENABLE_HARDENED_RUNTIME: true
+        COMBINE_HIDPI_IMAGES: true
+    dependencies:
+      - target: VideoPedalCameraExtension
+        embed: true
+        codeSign: true
+
+  VideoPedalCameraExtension:
+    type: system-extension
+    platform: macOS
+    bundleIdPrefix: dev.castdrian.videopedal
+    sources:
+      - path: VideoPedalCameraExtension
+      - path: Shared
+    info:
+      path: VideoPedalCameraExtension/Info.plist
+      properties:
+        CFBundleDisplayName: Video Pedal Camera Extension
+        CFBundlePackageType: SYSX
+        LSMinimumSystemVersion: "14.0"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.cmio.extension
+        CMIOExtensionMachServiceName: dev.castdrian.videopedal.cameraextension.xpc
+    entitlements:
+      path: VideoPedalCameraExtension/VideoPedalCameraExtension.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups:
+          - group.dev.castdrian.videopedal
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.castdrian.videopedal.cameraextension
+        PRODUCT_NAME: VideoPedalCameraExtension
+        GENERATE_INFOPLIST_FILE: false
+        SKIP_INSTALL: true
+        ENABLE_HARDENED_RUNTIME: true
+
+schemes:
+  VideoPedal:
+    build:
+      targets:
+        VideoPedal: all
+        VideoPedalCameraExtension: all
+    run:
+      config: Debug

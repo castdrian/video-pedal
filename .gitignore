@@ -1,3 +1,6 @@
-.venv/
-__pycache__/
-.pytest_cache/
+xcuserdata/
+.build/
+DerivedData/
+*.dSYM.zip
+*.dSYM
+.DS_Store
