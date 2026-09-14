@@ -58,7 +58,7 @@ enum PedalKey: String, CaseIterable, Identifiable, Codable {
 }
 
 /// Listens system-wide for the pedal key (hold = record/loop) and the live key (tap = go live),
-/// ignoring OS-level chatter on modifier keys. Requires Input Monitoring permission.
+/// ignoring OS-level chatter on modifier keys in a non-sandboxed macOS app.
 final class HotkeyMonitor {
     enum Event { case down, up, live }
 

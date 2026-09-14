@@ -1,13 +1,12 @@
 import SwiftUI
 
-/// A three-step wizard: Camera access, Input Monitoring (for the global pedal key), then
-/// installing the camera system extension. Each step re-checks its own status live.
+/// A two-step wizard: Camera access, then installing the camera system extension.
 struct PermissionsWizardView: View {
     @EnvironmentObject private var appState: AppState
 
     var body: some View {
         VStack(spacing: 24) {
-            Text("Set up Video Pedal")
+            Text("Set up videopedal")
                 .font(.title.bold())
             Text("Three one-time steps, then you're ready to go.")
                 .foregroundStyle(.secondary)
@@ -15,22 +14,16 @@ struct PermissionsWizardView: View {
             VStack(spacing: 16) {
                 WizardStep(
                     number: 1, title: "Camera access",
-                    detail: "So Video Pedal can see your webcam.",
+                    detail: "So videopedal can see your webcam.",
                     done: appState.cameraAuthorized,
                     action: "Grant access", action_: appState.requestCameraAccess)
 
                 WizardStep(
-                    number: 2, title: "Input Monitoring",
-                    detail: "So the pedal key works even when another app is focused.",
-                    done: appState.inputMonitoringAuthorized,
-                    action: "Open System Settings", action_: appState.requestInputMonitoring)
-
-                WizardStep(
-                    number: 3, title: "Install the virtual camera",
+                    number: 2, title: "Install the virtual camera",
                     detail: extensionDetail,
-                    done: appState.extensionStatus == .installed,
+                    done: appState.obsAvailable,
                     action: "Install", action_: appState.installExtension,
-                    disabled: !(appState.cameraAuthorized && appState.inputMonitoringAuthorized))
+                    disabled: !appState.cameraAuthorized)
             }
             .padding(24)
             .background(.background.secondary, in: RoundedRectangle(cornerRadius: 16))
@@ -42,16 +35,9 @@ struct PermissionsWizardView: View {
     }
 
     private var extensionDetail: String {
-        switch appState.extensionStatus {
-        case .needsUserApproval:
-            return "Approve \"Video Pedal\" in System Settings \u{2192} Privacy & Security."
-        case .failed(let message):
-            return "Failed: \(message)"
-        case .requiresReboot:
-            return "Installed. A logout/restart may be needed the first time."
-        default:
-            return "Publishes \"Video Pedal\" as a selectable camera in Zoom, Meet, Teams..."
-        }
+        return appState.obsAvailable
+            ? "OBS Virtual Camera is ready for Zoom, Meet, Teams..."
+            : "Start OBS Virtual Camera once, then click Connect."
     }
 }
 

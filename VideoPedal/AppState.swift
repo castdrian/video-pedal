@@ -16,8 +16,8 @@ final class AppState: ObservableObject {
     @Published var crossfadeSeconds: Double = 0.5
 
     @Published var cameraAuthorized = CameraCaptureManager.isAuthorized
-    @Published var inputMonitoringAuthorized = HotkeyMonitor.inputMonitoringGranted
-    @Published private(set) var extensionStatus: ExtensionInstaller.Status = .unknown
+    @Published var inputMonitoringAuthorized = true
+    @Published private(set) var obsAvailable = false
 
     @Published var selectedCamera: AVCaptureDevice?
     @Published private(set) var previewImage: CGImage?
@@ -25,7 +25,7 @@ final class AppState: ObservableObject {
     @Published private(set) var pedalEnabled = false
     @Published private(set) var logLines: [String] = []
 
-    let extensionInstaller = ExtensionInstaller()
+    private let obsOutput = OBSOutputClient()
     private let capture = CameraCaptureManager()
     private let extensionClient = ExtensionClient()
     private var hotkey: HotkeyMonitor?
@@ -39,8 +39,6 @@ final class AppState: ObservableObject {
     var availableCameras: [AVCaptureDevice] { CameraCaptureManager.availableCameras() }
 
     init() {
-        extensionInstaller.$status.receive(on: RunLoop.main).sink { [weak self] in self?.extensionStatus = $0 }
-            .store(in: &cancellables)
     }
 
     func log(_ message: String) {
@@ -52,24 +50,32 @@ final class AppState: ObservableObject {
     // MARK: - Permission wizard steps
 
     func requestCameraAccess() {
-        CameraCaptureManager.requestAccess { [weak self] granted in self?.cameraAuthorized = granted }
-    }
-
-    func requestInputMonitoring() {
-        HotkeyMonitor.requestInputMonitoring()
-        // The user has to grant this in System Settings; poll briefly for the change.
-        Task {
-            for _ in 0..<20 {
-                try? await Task.sleep(nanoseconds: 500_000_000)
-                let granted = HotkeyMonitor.inputMonitoringGranted
-                await MainActor.run { self.inputMonitoringAuthorized = granted }
-                if granted { break }
+        CameraCaptureManager.requestAccess { [weak self] granted in
+            guard let self else { return }
+            self.cameraAuthorized = granted
+            if granted {
+                Task { @MainActor in
+                    self.connectOBS()
+                }
             }
         }
     }
 
+    func requestInputMonitoring() {
+        // Global hotkeys are handled via a CGEventTap and do not require the Input Monitoring
+        // permission in this non-sandboxed macOS app. Keep the method as a no-op so older UI/state
+        // code remains harmless while the wizard no longer demands it.
+        inputMonitoringAuthorized = true
+    }
+
     func installExtension() {
-        extensionInstaller.activate()
+        connectOBS()
+    }
+
+    func connectOBS() {
+        obsOutput.connect(width: SharedConstants.outputWidth, height: SharedConstants.outputHeight)
+        obsAvailable = obsOutput.isAvailable
+        log(obsAvailable ? "OBS Virtual Camera connected." : "OBS Virtual Camera is unavailable. Start it once in OBS.")
     }
 
     // MARK: - Runtime
@@ -79,7 +85,8 @@ final class AppState: ObservableObject {
                              crossfadeSeconds: crossfadeSeconds, codec: codec, blender: blender,
                              log: { [weak self] in self?.log($0) })
 
-        extensionClient.connect()
+        obsOutput.connect(width: SharedConstants.outputWidth, height: SharedConstants.outputHeight)
+        obsAvailable = obsOutput.isAvailable
 
         capture.onFrame = { [weak self] pixelBuffer in
             guard let self else { return }
@@ -108,7 +115,7 @@ final class AppState: ObservableObject {
         pedalEnabled = hotkey.start()
         self.hotkey = pedalEnabled ? hotkey : nil
         if !pedalEnabled {
-            log("Input Monitoring isn't granted, so the global pedal/live keys are off.")
+            log("Global hotkeys could not be installed; the app will continue without them.")
         }
     }
 
@@ -116,7 +123,8 @@ final class AppState: ObservableObject {
         capture.stop()
         hotkey?.stop()
         hotkey = nil
-        extensionClient.disconnect()
+        obsOutput.disconnect()
+        obsAvailable = false
     }
 
     func toggleRecordFromUI() { engine?.toggleRecord() }
@@ -131,7 +139,7 @@ final class AppState: ObservableObject {
 
         frameCount += 1
         let hostTimeNs = UInt64(DispatchTime.now().uptimeNanoseconds)
-        extensionClient.send(output, displayTimeNs: hostTimeNs)
+        obsOutput.send(output, hostTimeNs: hostTimeNs)
 
         hud = engine.hudInfo
         if frameCount % 2 == 0, let cgImage = ciContext.createCGImage(CIImage(cvPixelBuffer: shown), from: CIImage(cvPixelBuffer: shown).extent) {

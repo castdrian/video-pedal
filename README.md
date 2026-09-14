@@ -74,7 +74,7 @@ per-frame serialization) → the extension wraps it in a `CMSampleBuffer` and ca
 
 ## Why a fork, and why still similar in spirit
 
-This repository started as a fork of the original Python/OpenCV/pyvirtualcam prototype
-(`haxybaxy/video-pedal`). The behavior and UX are intentionally kept 1:1 with that version;
-everything else — the runtime, the virtual camera mechanism, and the dependency footprint —
-is now native macOS.
+This is a full Swift/Xcode rewrite of the original Python/OpenCV/pyvirtualcam prototype
+(`haxybaxy/video-pedal`). It uses OBS Studio's already-approved macOS Camera Extension as the
+virtual-camera output, matching the original Python backend without installing another system
+extension.

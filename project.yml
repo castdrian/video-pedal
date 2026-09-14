@@ -9,7 +9,7 @@ settings:
   base:
     SWIFT_VERSION: "5.0"
     MACOSX_DEPLOYMENT_TARGET: "14.0"
-    DEVELOPMENT_TEAM: ""
+    DEVELOPMENT_TEAM: "L988J7YMK5"
     CODE_SIGN_STYLE: Automatic
 
 targets:
@@ -44,14 +44,16 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: dev.castdrian.videopedal
         PRODUCT_NAME: videopedal
         EXECUTABLE_NAME: videopedal
+        SYSTEM_EXTENSIONS_FOLDER_PATH: "$(CONTENTS_FOLDER_PATH)/PlugIns"
         INFOPLIST_KEY_NSHumanReadableCopyright: ""
         GENERATE_INFOPLIST_FILE: false
         ENABLE_HARDENED_RUNTIME: true
         COMBINE_HIDPI_IMAGES: true
+        SWIFT_OBJC_BRIDGING_HEADER: VideoPedal/OBSVirtualCamera.h
     dependencies:
-      - target: VideoPedalCameraExtension
-        embed: true
-        codeSign: true
+      - sdk: CoreMediaIO.framework
+      - sdk: CoreMedia.framework
+      - sdk: CoreVideo.framework
 
   VideoPedalCameraExtension:
     type: system-extension
@@ -78,8 +80,8 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.castdrian.videopedal.cameraextension
-        PRODUCT_NAME: videopedalcameraextension
-        EXECUTABLE_NAME: videopedalcameraextension
+        PRODUCT_NAME: dev.castdrian.videopedal.cameraextension
+        EXECUTABLE_NAME: dev.castdrian.videopedal.cameraextension
         GENERATE_INFOPLIST_FILE: false
         SKIP_INSTALL: true
         ENABLE_HARDENED_RUNTIME: true
@@ -89,6 +91,5 @@ schemes:
     build:
       targets:
         VideoPedal: all
-        VideoPedalCameraExtension: all
     run:
       config: Debug

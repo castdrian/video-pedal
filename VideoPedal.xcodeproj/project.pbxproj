@@ -8,16 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		11111FD1CB6C896E51F7ECFB /* HotkeyMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 587317DEDC15365931E283D4 /* HotkeyMonitor.swift */; };
+		11B2ECACC3F12FB9E462F4B3 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A7B2EB41BA3B607251CF4CD /* CoreVideo.framework */; };
 		163B005F66396EF35952A57A /* SharedConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A42BDDD39A79E0259C1C1DE /* SharedConstants.swift */; };
 		245799EED18308F743CFD134 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AFDF2B31D8FBB21C6538089 /* AppState.swift */; };
 		245ECFB11B1FBD2DF1FF0FBD /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39823814E8628BDFA3BAD0E8 /* main.swift */; };
-		2CE088E62BF6CECEA2FF4DFD /* VideoPedalCameraExtension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = 8E89E2DCF93B3FFFE8B4C69B /* VideoPedalCameraExtension.systemextension */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		368BAFE86EF5531EE9A7B10C /* CameraExtensionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6B48FD3C05FB932EE42882 /* CameraExtensionProvider.swift */; };
 		3873A2E2C3E8D901E5A166DC /* VideoPedalApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D051897A44260EEB31F9C9BF /* VideoPedalApp.swift */; };
 		5C0AE45711F88ADD89106BB6 /* ExtensionInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E302D96A88C08B86DF3828 /* ExtensionInstaller.swift */; };
+		76B8B56A3F7910C5F941D8AE /* OBSVirtualCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = 628108425CF57BD22D6D9363 /* OBSVirtualCamera.mm */; };
+		914C333EF6C325BB90DF5B50 /* OBSOutputClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023FB8A9C020F3978DEF57C3 /* OBSOutputClient.swift */; };
 		9DE5DC2F2F284E36A90ED8C3 /* XPCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377B1529E24DA74F1C41EE7C /* XPCService.swift */; };
+		AF169A18F9B3E2502B9F3D87 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58D120BAEF54BC1AF0864AAF /* CoreMedia.framework */; };
 		B1143AE1AE9B3294541422D9 /* PedalEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A6F9E20B1C6C52E65703CD /* PedalEngine.swift */; };
 		B46D1C1B2D45FF079191DDE5 /* ExtensionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4624136F1AAA8CB1A554A200 /* ExtensionClient.swift */; };
+		C1962B021C172F1B360C3BE3 /* CoreMediaIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10F0CA17AB0C5D52B3A5323A /* CoreMediaIO.framework */; };
 		D2F7A4516DC1595B09962CE3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1BBCDC7A442B4AB860805B /* ContentView.swift */; };
 		DEB0ABC90BCB8EE541FE3842 /* CameraExtensionXPCProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41816B2FB8ADC41F566E323 /* CameraExtensionXPCProtocol.swift */; };
 		E4CB4CFD900ABFD20429C871 /* CameraCaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243A3D6CE3E45A22AB1DCC38 /* CameraCaptureManager.swift */; };
@@ -26,38 +30,20 @@
 		FCB6D40B39B63BA4A3004287 /* PermissionsWizardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F98E6F55EFC463BFFFA22CF2 /* PermissionsWizardView.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		CABE329CE9C73BBE5CB84D99 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4770610F605FEA45003D902E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BA0DB21DC9BDFE5B841FF8D8;
-			remoteInfo = VideoPedalCameraExtension;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		E3875336F8A0DA39308615F5 /* Embed System Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(SYSTEM_EXTENSIONS_FOLDER_PATH)";
-			dstSubfolderSpec = 16;
-			files = (
-				2CE088E62BF6CECEA2FF4DFD /* VideoPedalCameraExtension.systemextension in Embed System Extensions */,
-			);
-			name = "Embed System Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		023FB8A9C020F3978DEF57C3 /* OBSOutputClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OBSOutputClient.swift; sourceTree = "<group>"; };
+		10F0CA17AB0C5D52B3A5323A /* CoreMediaIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMediaIO.framework; path = System/Library/Frameworks/CoreMediaIO.framework; sourceTree = SDKROOT; };
 		1A42BDDD39A79E0259C1C1DE /* SharedConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedConstants.swift; sourceTree = "<group>"; };
+		23F45672B67073C289F6A074 /* OBSVirtualCamera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OBSVirtualCamera.h; sourceTree = "<group>"; };
 		243A3D6CE3E45A22AB1DCC38 /* CameraCaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCaptureManager.swift; sourceTree = "<group>"; };
 		377B1529E24DA74F1C41EE7C /* XPCService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XPCService.swift; sourceTree = "<group>"; };
 		39823814E8628BDFA3BAD0E8 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		3A7B2EB41BA3B607251CF4CD /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		3D7916AAA7DA5F1071E188D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4624136F1AAA8CB1A554A200 /* ExtensionClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionClient.swift; sourceTree = "<group>"; };
 		587317DEDC15365931E283D4 /* HotkeyMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyMonitor.swift; sourceTree = "<group>"; };
+		58D120BAEF54BC1AF0864AAF /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		628108425CF57BD22D6D9363 /* OBSVirtualCamera.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OBSVirtualCamera.mm; sourceTree = "<group>"; };
 		6AFDF2B31D8FBB21C6538089 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		8E6B48FD3C05FB932EE42882 /* CameraExtensionProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraExtensionProvider.swift; sourceTree = "<group>"; };
 		8E89E2DCF93B3FFFE8B4C69B /* VideoPedalCameraExtension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = VideoPedalCameraExtension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -73,6 +59,19 @@
 		F98E6F55EFC463BFFFA22CF2 /* PermissionsWizardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsWizardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFrameworksBuildPhase section */
+		6F05DB2187DF923A1EE8521F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C1962B021C172F1B360C3BE3 /* CoreMediaIO.framework in Frameworks */,
+				AF169A18F9B3E2502B9F3D87 /* CoreMedia.framework in Frameworks */,
+				11B2ECACC3F12FB9E462F4B3 /* CoreVideo.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXGroup section */
 		05AC9842E4A580ABAAD8EFC6 /* VideoPedal */ = {
 			isa = PBXGroup;
@@ -84,12 +83,25 @@
 				F0E302D96A88C08B86DF3828 /* ExtensionInstaller.swift */,
 				587317DEDC15365931E283D4 /* HotkeyMonitor.swift */,
 				B2AC43E86965DED7816F2093 /* Info.plist */,
+				023FB8A9C020F3978DEF57C3 /* OBSOutputClient.swift */,
+				23F45672B67073C289F6A074 /* OBSVirtualCamera.h */,
+				628108425CF57BD22D6D9363 /* OBSVirtualCamera.mm */,
 				C7A6F9E20B1C6C52E65703CD /* PedalEngine.swift */,
 				F98E6F55EFC463BFFFA22CF2 /* PermissionsWizardView.swift */,
 				97ECEB0F158CD5C773C2EF24 /* VideoPedal.entitlements */,
 				D051897A44260EEB31F9C9BF /* VideoPedalApp.swift */,
 			);
 			path = VideoPedal;
+			sourceTree = "<group>";
+		};
+		13498B41287FA02D2DB0EAF9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				58D120BAEF54BC1AF0864AAF /* CoreMedia.framework */,
+				10F0CA17AB0C5D52B3A5323A /* CoreMediaIO.framework */,
+				3A7B2EB41BA3B607251CF4CD /* CoreVideo.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		3976297BED34CB9410B5FA64 /* VideoPedalCameraExtension */ = {
@@ -119,6 +131,7 @@
 				FD635EC0CA8D6253BA9F4FBC /* Shared */,
 				05AC9842E4A580ABAAD8EFC6 /* VideoPedal */,
 				3976297BED34CB9410B5FA64 /* VideoPedalCameraExtension */,
+				13498B41287FA02D2DB0EAF9 /* Frameworks */,
 				5DD38296486EB52BD6D6FF18 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -140,12 +153,11 @@
 			buildConfigurationList = B4C01F55166974ABB95A2F0F /* Build configuration list for PBXNativeTarget "VideoPedal" */;
 			buildPhases = (
 				0C92F45AB117F51758BE8017 /* Sources */,
-				E3875336F8A0DA39308615F5 /* Embed System Extensions */,
+				6F05DB2187DF923A1EE8521F /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				A305145353E4BCD0CA53F39B /* PBXTargetDependency */,
 			);
 			name = VideoPedal;
 			packageProductDependencies = (
@@ -178,13 +190,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2660;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					34FD049DB9AC46C3384EDBC0 = {
+						DevelopmentTeam = L988J7YMK5;
 						ProvisioningStyle = Automatic;
 					};
 					BA0DB21DC9BDFE5B841FF8D8 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = L988J7YMK5;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -221,6 +234,8 @@
 				B46D1C1B2D45FF079191DDE5 /* ExtensionClient.swift in Sources */,
 				5C0AE45711F88ADD89106BB6 /* ExtensionInstaller.swift in Sources */,
 				11111FD1CB6C896E51F7ECFB /* HotkeyMonitor.swift in Sources */,
+				914C333EF6C325BB90DF5B50 /* OBSOutputClient.swift in Sources */,
+				76B8B56A3F7910C5F941D8AE /* OBSVirtualCamera.mm in Sources */,
 				B1143AE1AE9B3294541422D9 /* PedalEngine.swift in Sources */,
 				FCB6D40B39B63BA4A3004287 /* PermissionsWizardView.swift in Sources */,
 				163B005F66396EF35952A57A /* SharedConstants.swift in Sources */,
@@ -241,14 +256,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		A305145353E4BCD0CA53F39B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BA0DB21DC9BDFE5B841FF8D8 /* VideoPedalCameraExtension */;
-			targetProxy = CABE329CE9C73BBE5CB84D99 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		0E4F47FEF4D08656D2F3E257 /* Debug */ = {
@@ -286,12 +293,10 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = L988J7YMK5;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -312,7 +317,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -324,8 +328,8 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = VideoPedalCameraExtension/VideoPedalCameraExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				EXECUTABLE_NAME = dev.castdrian.videopedal.cameraextension;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = VideoPedalCameraExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -333,8 +337,7 @@
 					"@executable_path/../Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.castdrian.videopedal.cameraextension;
-				PRODUCT_NAME = VideoPedalCameraExtension;
-				REGISTER_APP_GROUPS = YES;
+				PRODUCT_NAME = dev.castdrian.videopedal.cameraextension;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
@@ -345,11 +348,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = VideoPedal/VideoPedal.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = L988J7YMK5;
 				ENABLE_HARDENED_RUNTIME = YES;
+				EXECUTABLE_NAME = videopedal;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = VideoPedal/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -358,9 +359,10 @@
 					"@executable_path/../Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.castdrian.videopedal;
-				PRODUCT_NAME = VideoPedal;
-				REGISTER_APP_GROUPS = YES;
+				PRODUCT_NAME = videopedal;
 				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = VideoPedal/OBSVirtualCamera.h;
+				SYSTEM_EXTENSIONS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/PlugIns";
 			};
 			name = Release;
 		};
@@ -399,12 +401,10 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = L988J7YMK5;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -418,7 +418,6 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -430,8 +429,8 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = VideoPedalCameraExtension/VideoPedalCameraExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				EXECUTABLE_NAME = dev.castdrian.videopedal.cameraextension;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = VideoPedalCameraExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -439,8 +438,7 @@
 					"@executable_path/../Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.castdrian.videopedal.cameraextension;
-				PRODUCT_NAME = VideoPedalCameraExtension;
-				REGISTER_APP_GROUPS = YES;
+				PRODUCT_NAME = dev.castdrian.videopedal.cameraextension;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
@@ -451,11 +449,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = VideoPedal/VideoPedal.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = L988J7YMK5;
 				ENABLE_HARDENED_RUNTIME = YES;
+				EXECUTABLE_NAME = videopedal;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = VideoPedal/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -464,9 +460,10 @@
 					"@executable_path/../Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.castdrian.videopedal;
-				PRODUCT_NAME = VideoPedal;
-				REGISTER_APP_GROUPS = YES;
+				PRODUCT_NAME = videopedal;
 				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = VideoPedal/OBSVirtualCamera.h;
+				SYSTEM_EXTENSIONS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/PlugIns";
 			};
 			name = Debug;
 		};

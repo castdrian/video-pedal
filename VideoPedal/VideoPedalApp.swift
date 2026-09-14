@@ -19,7 +19,7 @@ struct RootView: View {
     @EnvironmentObject private var appState: AppState
 
     private var allSet: Bool {
-        appState.cameraAuthorized && appState.inputMonitoringAuthorized && appState.extensionStatus == .installed
+        appState.cameraAuthorized && appState.obsAvailable
     }
 
     var body: some View {
