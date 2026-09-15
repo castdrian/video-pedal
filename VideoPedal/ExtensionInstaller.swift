@@ -29,14 +29,17 @@ final class ExtensionInstaller: NSObject, ObservableObject {
 extension ExtensionInstaller: OSSystemExtensionRequestDelegate {
     func request(_ request: OSSystemExtensionRequest,
                 didFinishWithResult result: OSSystemExtensionRequest.Result) {
+        NSLog("VideoPedal: extension activation finished with result: \(result.rawValue)")
         status = result == .completed ? .installed : .requiresReboot
     }
 
     func request(_ request: OSSystemExtensionRequest, didFailWithError error: Error) {
+        NSLog("VideoPedal: extension activation failed: \(error)")
         status = .failed(error.localizedDescription)
     }
 
     func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
+        NSLog("VideoPedal: extension activation needs user approval in System Settings.")
         status = .needsUserApproval
     }
 

@@ -24,8 +24,15 @@ struct RootView: View {
     @EnvironmentObject private var appState: AppState
 
     var body: some View {
-        ContentView()
-            .onAppear { appState.start() }
-            .onDisappear { appState.stop() }
+        Group {
+            if !appState.wizardSkipped
+                && (!appState.cameraAuthorized || appState.extensionStatus == .unknown || appState.extensionStatus == .needsUserApproval) {
+                PermissionsWizardView()
+            } else {
+                ContentView()
+            }
+        }
+        .onAppear { appState.start() }
+        .onDisappear { appState.stop() }
     }
 }

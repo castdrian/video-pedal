@@ -7,7 +7,10 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             previewArea
+            // Higher priority so the fixed-height control bar always keeps its space and
+            // only the flexible video area gets compressed when the window shrinks.
             hudBar
+                .layoutPriority(1)
         }
         .background(Color.black)
         .background(WindowAspectRatio(ratio: CGSize(width: 16, height: 10)))

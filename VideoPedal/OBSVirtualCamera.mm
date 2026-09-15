@@ -65,18 +65,10 @@ public:
         if (CMVideoFormatDescriptionCreate(kCFAllocatorDefault, kCVPixelFormatType_422YpCbCr8, width, height, nullptr, &formatDescription) != noErr) return;
         if (CMIODeviceStartStream(deviceID, streamID) != noErr) return;
         outputBuffer.resize(static_cast<size_t>(width) * height * 2);
-        valid = true;
-    }
 
-    ~OBSOutput() {
-        if (valid) CMIODeviceStopStream(deviceID, streamID);
-        if (queue) CFRelease(queue);
-        if (formatDescription) CFRelease(formatDescription);
-    }
-
-    bool send(const uint8_t *pixels, size_t bytesPerRow, uint64_t hostTimeNs) {
-        if (!valid || !pixels) return false;
-        bgraToUYVY(pixels, bytesPerRow, outputBuffer.data(), width, height);
+        // Create the pixel buffer pool once and reuse it for every frame; recreating a pool
+        // (and its backing IOSurfaces) on every call was a per-frame allocation storm that
+        // starved the main thread and caused visible lag/freezes in the host app.
         NSDictionary *poolAttributes = @{};
         NSDictionary *bufferAttributes = @{
             (id)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_422YpCbCr8),
@@ -84,11 +76,23 @@ public:
             (id)kCVPixelBufferHeightKey: @(height),
             (id)kCVPixelBufferIOSurfacePropertiesKey: @{}
         };
-        CVPixelBufferPoolRef pool = nullptr;
-        if (CVPixelBufferPoolCreate(kCFAllocatorDefault, (__bridge CFDictionaryRef)poolAttributes, (__bridge CFDictionaryRef)bufferAttributes, &pool) != kCVReturnSuccess) return false;
+        if (CVPixelBufferPoolCreate(kCFAllocatorDefault, (__bridge CFDictionaryRef)poolAttributes, (__bridge CFDictionaryRef)bufferAttributes, &pixelBufferPool) != kCVReturnSuccess) return;
+
+        valid = true;
+    }
+
+    ~OBSOutput() {
+        if (valid) CMIODeviceStopStream(deviceID, streamID);
+        if (queue) CFRelease(queue);
+        if (formatDescription) CFRelease(formatDescription);
+        if (pixelBufferPool) CVPixelBufferPoolRelease(pixelBufferPool);
+    }
+
+    bool send(const uint8_t *pixels, size_t bytesPerRow, uint64_t hostTimeNs) {
+        if (!valid || !pixels) return false;
+        bgraToUYVY(pixels, bytesPerRow, outputBuffer.data(), width, height);
         CVPixelBufferRef pixelBuffer = nullptr;
-        CVReturn result = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pool, &pixelBuffer);
-        CVPixelBufferPoolRelease(pool);
+        CVReturn result = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pixelBufferPool, &pixelBuffer);
         if (result != kCVReturnSuccess || !pixelBuffer) return false;
         CVPixelBufferLockBaseAddress(pixelBuffer, 0);
         std::memcpy(CVPixelBufferGetBaseAddress(pixelBuffer), outputBuffer.data(), outputBuffer.size());
@@ -113,6 +117,7 @@ private:
     CMIOStreamID streamID = 0;
     CMSimpleQueueRef queue = nullptr;
     CMFormatDescriptionRef formatDescription = nullptr;
+    CVPixelBufferPoolRef pixelBufferPool = nullptr;
     std::vector<uint8_t> outputBuffer;
     bool valid = false;
 };

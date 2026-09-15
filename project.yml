@@ -51,6 +51,44 @@ targets:
       - sdk: CoreMediaIO.framework
       - sdk: CoreMedia.framework
       - sdk: CoreVideo.framework
+      - target: VideoPedalCameraExtension
+        embed: true
+        codeSign: true
+
+  VideoPedalCameraExtension:
+    type: system-extension
+    platform: macOS
+    bundleIdPrefix: dev.castdrian.videopedal
+    sources:
+      - path: VideoPedalCameraExtension
+      - path: Shared
+    info:
+      path: VideoPedalCameraExtension/Info.plist
+      properties:
+        CFBundleDisplayName: videopedalcameraextension
+        CFBundlePackageType: SYSX
+        LSMinimumSystemVersion: "14.0"
+        CMIOExtensionMachServiceName: dev.castdrian.videopedal.cameraextension.xpc
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.cmio.extension
+    entitlements:
+      path: VideoPedalCameraExtension/VideoPedalCameraExtension.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups:
+          - group.dev.castdrian.videopedal
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.castdrian.videopedal.cameraextension
+        PRODUCT_NAME: videopedalcameraextension
+        EXECUTABLE_NAME: videopedalcameraextension
+        INFOPLIST_KEY_NSHumanReadableCopyright: ""
+        GENERATE_INFOPLIST_FILE: false
+        ENABLE_HARDENED_RUNTIME: true
+        SKIP_INSTALL: true
+    dependencies:
+      - sdk: CoreMediaIO.framework
+      - sdk: CoreMedia.framework
 
 schemes:
   VideoPedal:

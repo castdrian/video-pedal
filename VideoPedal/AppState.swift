@@ -1,6 +1,7 @@
 import Foundation
 import AVFoundation
 import CoreImage
+import Combine
 import SwiftUI
 
 /// Ties together capture, the pedal state machine, the hotkey monitor and the extension
@@ -24,12 +25,17 @@ final class AppState: ObservableObject {
     @Published private(set) var pedalEnabled = false
     @Published private(set) var logLines: [String] = []
     @Published private(set) var statusMessage = "Starting..."
+    @Published private(set) var extensionStatus: ExtensionInstaller.Status = .unknown
+    @Published private(set) var wizardSkipped = false
 
     private let obsOutput = OBSOutputClient()
+    private let extensionClient = ExtensionClient()
+    let extensionInstaller = ExtensionInstaller()
     private let capture = CameraCaptureManager()
     private var hotkey: HotkeyMonitor?
     private var engine: PedalEngine?
     private var isRunning = false
+    private var cancellables: Set<AnyCancellable> = []
 
     private let ciContext = CIContext()
     private lazy var codec = JPEGFrameCodec(context: ciContext)
@@ -38,6 +44,10 @@ final class AppState: ObservableObject {
     var availableCameras: [AVCaptureDevice] { CameraCaptureManager.availableCameras() }
 
     init() {
+        extensionInstaller.$status
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] status in self?.extensionStatus = status }
+            .store(in: &cancellables)
     }
 
     func log(_ message: String) {
@@ -76,6 +86,14 @@ final class AppState: ObservableObject {
         log(obsAvailable ? "OBS Virtual Camera connected." : "OBS Virtual Camera is unavailable. Start it once in OBS.")
     }
 
+    func installCameraExtension() {
+        extensionInstaller.activate()
+    }
+
+    func skipWizard() {
+        wizardSkipped = true
+    }
+
     // MARK: - Runtime
 
     func start() {
@@ -90,9 +108,11 @@ final class AppState: ObservableObject {
                              crossfadeSeconds: crossfadeSeconds, codec: codec, blender: blender,
                              log: { [weak self] in self?.log($0) })
 
+        extensionClient.connect()
+        installCameraExtension()
         obsOutput.connect(width: SharedConstants.outputWidth, height: SharedConstants.outputHeight)
         obsAvailable = obsOutput.isAvailable
-        statusMessage = obsAvailable ? "Ready" : "Preview only"
+        statusMessage = "Ready"
 
         capture.onFrame = { [weak self] pixelBuffer in
             guard let self else { return }
@@ -132,6 +152,7 @@ final class AppState: ObservableObject {
         capture.stop()
         hotkey?.stop()
         hotkey = nil
+        extensionClient.disconnect()
         obsOutput.disconnect()
         obsAvailable = false
     }
@@ -148,6 +169,7 @@ final class AppState: ObservableObject {
 
         frameCount += 1
         let hostTimeNs = UInt64(DispatchTime.now().uptimeNanoseconds)
+        extensionClient.send(output, displayTimeNs: hostTimeNs)
         obsOutput.send(output, hostTimeNs: hostTimeNs)
 
         hud = engine.hudInfo

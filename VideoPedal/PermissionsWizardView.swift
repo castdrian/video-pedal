@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// A two-step wizard: Camera access, then connecting to OBS Virtual Camera.
+/// A three-step wizard: Camera access, installing the Video Pedal system camera, then
+/// optionally connecting OBS Virtual Camera as a fallback output.
 struct PermissionsWizardView: View {
     @EnvironmentObject private var appState: AppState
 
@@ -8,7 +9,7 @@ struct PermissionsWizardView: View {
         VStack(spacing: 24) {
             Text("Set up videopedal")
                 .font(.title.bold())
-            Text("Two one-time steps, then you're ready to go.")
+            Text("A couple one-time steps, then you're ready to go.")
                 .foregroundStyle(.secondary)
 
             VStack(spacing: 16) {
@@ -19,8 +20,15 @@ struct PermissionsWizardView: View {
                     action: "Grant access", action_: appState.requestCameraAccess)
 
                 WizardStep(
-                    number: 2, title: "Connect OBS Virtual Camera",
-                    detail: extensionDetail,
+                    number: 2, title: "Install the Video Pedal camera",
+                    detail: extensionInstallDetail,
+                    done: appState.extensionStatus == .installed,
+                    action: "Install", action_: appState.installCameraExtension,
+                    disabled: !appState.cameraAuthorized)
+
+                WizardStep(
+                    number: 3, title: "Connect OBS Virtual Camera (optional)",
+                    detail: obsDetail,
                     done: appState.obsAvailable,
                     action: "Connect", action_: appState.connectOBS,
                     disabled: !appState.cameraAuthorized)
@@ -28,16 +36,31 @@ struct PermissionsWizardView: View {
             .padding(24)
             .background(.background.secondary, in: RoundedRectangle(cornerRadius: 16))
 
+            if appState.cameraAuthorized {
+                Button("Continue to app") { appState.skipWizard() }
+                    .buttonStyle(.link)
+            }
+
             Spacer()
         }
         .padding(40)
         .frame(maxWidth: 560)
     }
 
-    private var extensionDetail: String {
+    private var extensionInstallDetail: String {
+        switch appState.extensionStatus {
+        case .installed: return "\"Video Pedal\" will show up as a camera in Zoom, Meet, Teams..."
+        case .needsUserApproval: return "Approve it in System Settings \u{2192} Privacy & Security, then relaunch."
+        case .requiresReboot: return "Installed \u{2014} a reboot may be required the first time."
+        case .failed(let message): return "Install failed: \(message)"
+        case .unknown: return "Publishes \"Video Pedal\" as a real system camera device."
+        }
+    }
+
+    private var obsDetail: String {
         return appState.obsAvailable
-            ? "OBS Virtual Camera is ready for Zoom, Meet, Teams..."
-            : "Start OBS Virtual Camera once, then click Connect."
+            ? "OBS Virtual Camera is also receiving frames."
+            : "Only needed if you specifically want to feed OBS's own virtual camera instead."
     }
 }
 
