@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// A three-step wizard: Camera access, installing the Video Pedal system camera, then
-/// optionally connecting OBS Virtual Camera as a fallback output.
+/// A two-step wizard: Camera access, then connecting OBS Virtual Camera as the output.
+/// videopedal feeds OBS's own virtual camera device rather than publishing its own
+/// system camera extension (see project README for why).
 struct PermissionsWizardView: View {
     @EnvironmentObject private var appState: AppState
 
@@ -20,14 +21,7 @@ struct PermissionsWizardView: View {
                     action: "Grant access", action_: appState.requestCameraAccess)
 
                 WizardStep(
-                    number: 2, title: "Install the Video Pedal camera",
-                    detail: extensionInstallDetail,
-                    done: appState.extensionStatus == .installed,
-                    action: "Install", action_: appState.installCameraExtension,
-                    disabled: !appState.cameraAuthorized)
-
-                WizardStep(
-                    number: 3, title: "Connect OBS Virtual Camera (optional)",
+                    number: 2, title: "Connect OBS Virtual Camera",
                     detail: obsDetail,
                     done: appState.obsAvailable,
                     action: "Connect", action_: appState.connectOBS,
@@ -47,20 +41,10 @@ struct PermissionsWizardView: View {
         .frame(maxWidth: 560)
     }
 
-    private var extensionInstallDetail: String {
-        switch appState.extensionStatus {
-        case .installed: return "\"Video Pedal\" will show up as a camera in Zoom, Meet, Teams..."
-        case .needsUserApproval: return "Approve it in System Settings \u{2192} Privacy & Security, then relaunch."
-        case .requiresReboot: return "Installed \u{2014} a reboot may be required the first time."
-        case .failed(let message): return "Install failed: \(message)"
-        case .unknown: return "Publishes \"Video Pedal\" as a real system camera device."
-        }
-    }
-
     private var obsDetail: String {
         return appState.obsAvailable
-            ? "OBS Virtual Camera is also receiving frames."
-            : "Only needed if you specifically want to feed OBS's own virtual camera instead."
+            ? "OBS Virtual Camera is receiving frames \u{2014} select it in Zoom, Meet, Teams..."
+            : "Start OBS Studio once so its Virtual Camera device is registered, then click Connect."
     }
 }
 

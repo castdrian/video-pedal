@@ -23,10 +23,13 @@ struct VideoPedalApp: App {
 struct RootView: View {
     @EnvironmentObject private var appState: AppState
 
+    private var showWizard: Bool {
+        !appState.wizardSkipped && !appState.cameraAuthorized
+    }
+
     var body: some View {
         Group {
-            if !appState.wizardSkipped
-                && (!appState.cameraAuthorized || appState.extensionStatus == .unknown || appState.extensionStatus == .needsUserApproval) {
+            if showWizard {
                 PermissionsWizardView()
             } else {
                 ContentView()
